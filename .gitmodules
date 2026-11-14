@@ -1,0 +1,9 @@
+[submodule "lib/cmsis-device-f4"]
+	path = lib/cmsis-device-f4
+	url = https://github.com/STMicroelectronics/cmsis-device-f4.git
+[submodule "lib/cmsis-core"]
+	path = lib/cmsis-core
+	url = https://github.com/STMicroelectronics/cmsis-core.git
+[submodule "lib/tinyusb"]
+	path = lib/tinyusb
+	url = https://github.com/hathach/tinyusb.git
