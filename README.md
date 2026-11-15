@@ -44,6 +44,17 @@ The second I2C and SPI ports need a kernel whose `dln2` driver asks the
 adapter for its port counts and adds a bus for each ("mfd: dln2: add a cell
 for each I2C and SPI port"); others use port 0 only.
 
+## Versions
+
+The firmware reports its version as the USB device release (`bcdDevice`,
+e.g. `0101` for 1.1; `lsusb -v -d 1209:0001`, or
+`/sys/bus/usb/devices/<device>/bcdDevice`). It is set in `src/version.h`.
+
+| Version | Changes |
+|---|---|
+| 1.0 | GPIO, I2C, SPI, ADC, UART |
+| 1.1 | second I2C port (GPIO0/1) and second SPI port (GPIO19-21) |
+
 ## Building and flashing
 
 Needs `arm-none-eabi-gcc` and `dfu-util`.

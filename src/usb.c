@@ -5,6 +5,7 @@
 // Interface 1-2  CDC ACM serial port on the header's UART (GPIO14/15)
 // Interface 3  DFU runtime: "dfu-util -e" reboots into the ROM bootloader
 // That is every endpoint the F401's OTG FS has: 3 IN and 2 OUT besides EP0.
+#include "version.h"
 #include <string.h>
 
 #include "board.h"
@@ -32,7 +33,7 @@ static const tusb_desc_device_t device_desc = {
 	.bMaxPacketSize0 = CFG_TUD_ENDPOINT0_SIZE,
 	.idVendor = USB_VID,
 	.idProduct = USB_PID,
-	.bcdDevice = 0x0100,
+	.bcdDevice = FIRMWARE_VERSION,
 	.iManufacturer = STR_MANUFACTURER,
 	.iProduct = STR_PRODUCT,
 	.iSerialNumber = STR_SERIAL,
