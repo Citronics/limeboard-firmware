@@ -40,6 +40,10 @@ echo "1209 0001" > /sys/bus/usb/drivers/dln2/new_id
 
 A udev rule does this at boot in the Citronics images.
 
+The second I2C and SPI ports need a kernel whose `dln2` driver asks the
+adapter for its port counts and adds a bus for each ("mfd: dln2: add a cell
+for each I2C and SPI port"); others use port 0 only.
+
 ## Building and flashing
 
 Needs `arm-none-eabi-gcc` and `dfu-util`.
