@@ -55,6 +55,16 @@ e.g. `0101` for 1.1; `lsusb -v -d 1209:0001`, or
 | 1.0 | GPIO, I2C, SPI, ADC, UART |
 | 1.1 | second I2C port (GPIO0/1) and second SPI port (GPIO19-21) |
 
+## Updating on a Lime image
+
+The Citronics Lime images carry this firmware in
+`/usr/share/limeboard/limeboard-io.bin`:
+
+```sh
+limeboard-config firmware              # running and shipped versions
+sudo limeboard-config firmware update
+```
+
 ## Building and flashing
 
 Needs `arm-none-eabi-gcc` and `dfu-util`.
