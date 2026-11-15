@@ -8,17 +8,24 @@ mainline `dln2` drivers:
 |---|---|
 | GPIO chip "dln2", lines 0-27 | GPIO0 to GPIO27 |
 | GPIO lines 28-31 | board RGB LED (red, green, blue) and user button |
-| I2C adapter "dln2-i2c" | SDA GPIO2, SCL GPIO3 (100 kHz) |
-| SPI controller | SPI0: MOSI GPIO10, MISO GPIO9, SCLK GPIO11, CE0 GPIO8, CE1 GPIO7 |
+| I2C port 0 (Pi i2c1) | SDA GPIO2, SCL GPIO3 (100 kHz), STM32 I2C1 |
+| I2C port 1 (Pi i2c0) | SDA GPIO0, SCL GPIO1 (100 kHz), STM32 I2C3 |
+| SPI port 0 (Pi spi0) | MOSI GPIO10, MISO GPIO9, SCLK GPIO11, CE0 GPIO8, CE1 GPIO7; STM32 SPI1, 328 kHz-42 MHz |
+| SPI port 1 (Pi spi1) | MOSI GPIO20, MISO GPIO19, SCLK GPIO21, CE0 GPIO18, CE1 GPIO17, CE2 GPIO16; STM32 SPI2, 164 kHz-21 MHz |
 | IIO ADC "dln2-adc", 8 channels, 10-bit, 3.3 V | GPIO5, 12, 16, 22, 17, 25, 20, 23 |
 | USB serial port (`ttyACM`) | UART TXD GPIO14, RXD GPIO15 |
 
 A pin is a plain GPIO until a function uses it: I2C, SPI and the ADC take
-their pins on first use, the UART while its serial port is open. A pin in
-use by one function is refused to the others, as on a Raspberry Pi.
+their pins on first use (an SPI chip select on its own first use), the UART
+while its serial port is open. A pin in use by one function is refused to
+the others, as on a Raspberry Pi, until the STM32 resets.
 
-Not available through DLN-2: the Pi's second SPI bus (GPIO16-21), PWM, and
-the phone's key lines, which stay undriven.
+There is one UART: the STM32F401's other USARTs have no usable TX/RX pair
+on the header, and the USB interface has no endpoints left for a second
+serial port.
+
+Not available through DLN-2: PWM, and the phone's key lines, which stay
+undriven.
 
 ## Linux side
 
