@@ -14,7 +14,15 @@
 #define CMD_PIN_SET_EVENT_CFG 0x011E
 #define EVENT_CONDITION_MET 0x010F
 
-enum { EVENT_NONE, EVENT_CHANGE, EVENT_LEVEL_HIGH, EVENT_LEVEL_LOW };
+// DLN-2 event types: any change, a level, or one edge
+enum {
+	EVENT_NONE = 0x00,
+	EVENT_CHANGE = 0x01,
+	EVENT_LEVEL_HIGH = 0x02,
+	EVENT_LEVEL_LOW = 0x03,
+	EVENT_RISING = 0x11,
+	EVENT_FALLING = 0x21,
+};
 
 static bool is_output[GPIO_LINES];
 static bool out_val[GPIO_LINES];
@@ -148,8 +156,9 @@ void gpio_task(void)
 		}
 		if (now - changed_at[line] < debounce_ms)
 			continue;
-		bool report = type == EVENT_CHANGE || (type == EVENT_LEVEL_HIGH && v) ||
-			      (type == EVENT_LEVEL_LOW && !v);
+		bool report = type == EVENT_CHANGE ||
+			      ((type == EVENT_LEVEL_HIGH || type == EVENT_RISING) && v) ||
+			      ((type == EVENT_LEVEL_LOW || type == EVENT_FALLING) && !v);
 		if (report) {
 			// le16 count, u8 type, le16 pin, u8 value
 			uint8_t ev[6];

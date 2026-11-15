@@ -10,7 +10,7 @@ DEV = lib/cmsis-device-f4
 CORE = lib/cmsis-core/CMSIS/Core
 
 ARCH = -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
-CFLAGS = $(ARCH) -Os -g -std=gnu11 -Wall -Wextra -Wno-unused-parameter \
+CFLAGS = $(ARCH) -Os -g -std=gnu11 -MMD -MP -Wall -Wextra -Wno-unused-parameter \
 	-ffunction-sections -fdata-sections \
 	-DSTM32F401xE -DHSE_VALUE=8000000 \
 	-Isrc -I$(TUSB) -I$(DEV)/Include -I$(CORE)/Include
@@ -52,3 +52,6 @@ clean:
 	rm -rf build
 
 .PHONY: all flash clean
+
+# Header dependencies written by -MMD
+-include $(OBJ:.o=.d)
