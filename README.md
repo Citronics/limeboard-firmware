@@ -55,6 +55,7 @@ e.g. `0101` for 1.1; `lsusb -v -d 1209:0001`, or
 | 1.0 | GPIO, I2C, SPI, ADC, UART |
 | 1.1 | second I2C port (GPIO0/1) and second SPI port (GPIO19-21) |
 | 1.2 | GPIO interrupts on rising or falling edges only, as SPI chips such as the MCP2515 ask for |
+| 1.3 | interrupts on lines that no program requested as GPIO, as kernel drivers use them |
 
 ## Updating on a Lime image
 

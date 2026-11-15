@@ -28,6 +28,7 @@ static bool is_output[GPIO_LINES];
 static bool out_val[GPIO_LINES];
 static uint8_t event_type[GPIO_LINES];
 static bool level[GPIO_LINES];         // last level reported
+static bool event_claim[GPIO_LINES];   // claimed by its event configuration
 static uint32_t changed_at[GPIO_LINES];
 static uint32_t debounce_ms;
 static uint16_t event_count;
@@ -50,6 +51,7 @@ void dln2_gpio_reset(void)
 		is_output[line] = (line == LINE_LED_R || line == LINE_LED_G || line == LINE_LED_B);
 		out_val[line] = false;
 		event_type[line] = EVENT_NONE;
+		event_claim[line] = false;
 	}
 	debounce_ms = 0;
 }
@@ -91,6 +93,7 @@ void dln2_gpio(const dln2_req_t *req)
 	case CMD_PIN_DISABLE: {
 		uint8_t l = line;
 		event_type[line] = EVENT_NONE;
+		event_claim[line] = false;
 		lines_release(&l, 1, OWNER_GPIO);
 		is_output[line] = (line == LINE_LED_R || line == LINE_LED_G || line == LINE_LED_B);
 		out_val[line] = false;
@@ -102,6 +105,17 @@ void dln2_gpio(const dln2_req_t *req)
 		return reply_pin(req, line, pin_read(p));
 	case CMD_PIN_GET_OUT_VAL:
 		return reply_pin(req, line, out_val[line]);
+	}
+
+	// An interrupt user (a kernel driver's irq on this line) configures
+	// events without requesting the line: claim it as an input then, and
+	// release it when its events are turned off
+	if (req->id == CMD_PIN_SET_EVENT_CFG && line_owner[line] == OWNER_NONE &&
+	    req->len >= 3 && req->data[2] != EVENT_NONE) {
+		uint8_t l = line;
+		lines_claim(&l, 1, OWNER_GPIO);
+		set_direction(line, false);
+		event_claim[line] = true;
 	}
 
 	// Changing a line needs it requested (enabled) first
@@ -126,6 +140,12 @@ void dln2_gpio(const dln2_req_t *req)
 		if (req->len < 3)
 			return dln2_err(req, DLN2_RES_BAD_PARAM);
 		event_type[line] = req->data[2];
+		if (event_type[line] == EVENT_NONE && event_claim[line]) {
+			uint8_t l = line;
+			lines_release(&l, 1, OWNER_GPIO);
+			event_claim[line] = false;
+			return dln2_ok(req);
+		}
 		level[line] = pin_read(p);
 		changed_at[line] = millis();
 		// A level condition already met is reported at once
