@@ -1,0 +1,88 @@
+name: release
+
+# Publish the firmware when src/version.h has a version without a release:
+# tag v<version>, build with the Arm GNU toolchain Buildroot uses (the binary
+# is then the one Buildroot images ship), release limeboard-io-firmware and the
+# .bin, and refresh the APT repository (Citronics/deb-packages), which needs
+# the APT_DISPATCH_TOKEN secret.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'lib/**'
+      - 'Makefile'
+      - 'stm32f401xe.ld'
+      - 'packaging/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  TOOLCHAIN: arm-gnu-toolchain-13.2.rel1-x86_64-arm-none-eabi
+  TOOLCHAIN_SHA256: 6cd1bbc1d9ae57312bcd169ae283153a9572bd6a8e4eeae2fedfbc33b115fdbb
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Version
+        id: version
+        run: |
+          V=$(awk '/define FIRMWARE_VERSION/ { v = substr($3, 3); printf "%d.%d", substr(v, 1, 2), substr(v, 3, 2) }' src/version.h)
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          if git rev-parse -q --verify "refs/tags/v$V" >/dev/null; then
+            echo "v$V is already released"
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Toolchain
+        if: steps.version.outputs.new == 'true'
+        run: |
+          curl -fsSL -o /tmp/tc.tar.xz "https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/$TOOLCHAIN.tar.xz"
+          echo "$TOOLCHAIN_SHA256  /tmp/tc.tar.xz" | sha256sum -c -
+          sudo mkdir -p /opt/arm && sudo tar -xJf /tmp/tc.tar.xz -C /opt/arm
+
+      - name: Build
+        if: steps.version.outputs.new == 'true'
+        run: |
+          git config user.name "Marc Lainez"
+          git config user.email "marc.lainez@gmail.com"
+          git tag "v${{ steps.version.outputs.version }}"
+          CROSS="/opt/arm/$TOOLCHAIN/bin/arm-none-eabi-" packaging/build-deb.sh
+
+      - name: Release
+        if: steps.version.outputs.new == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          V="${{ steps.version.outputs.version }}"
+          git push origin "v$V"
+          gh release create "v$V" dist/*.deb dist/*.bin \
+            --title "Limeboard I/O firmware $V" \
+            --notes "limeboard-io-firmware $V: the firmware binary and its Debian package."
+
+      - name: Refresh the APT repository
+        if: steps.version.outputs.new == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.APT_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::APT_DISPATCH_TOKEN is not set: the release is on GitHub but not in the APT repository"
+            exit 1
+          fi
+          gh api repos/Citronics/deb-packages/dispatches -f event_type=update-repo
