@@ -63,7 +63,7 @@ jobs:
           git config user.name "Marc Lainez"
           git config user.email "marc.lainez@gmail.com"
           git tag "v${{ steps.version.outputs.version }}"
-          CROSS="/opt/arm/$TOOLCHAIN/bin/arm-none-eabi-" packaging/build-deb.sh
+          CROSS="$(ls -d /opt/arm/*/bin)/arm-none-eabi-" packaging/build-deb.sh
 
       - name: Release
         if: steps.version.outputs.new == 'true'
