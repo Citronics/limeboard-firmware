@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DLN-2 protocol, as the Linux dln2 drivers (drivers/mfd/dln2.c and its
 // gpio, i2c, spi and adc cells) speak it. All fields are little-endian.
 //

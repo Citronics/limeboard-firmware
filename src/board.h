@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Limeboard STM32F401: pins and shared helpers.
 #pragma once
 

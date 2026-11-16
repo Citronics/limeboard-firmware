@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // USB device: descriptors and the DLN-2 transport.
 //
 // Interface 0  DLN-2 (vendor class, bulk OUT 0x01 / IN 0x81): the Linux dln2

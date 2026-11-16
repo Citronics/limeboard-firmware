@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Limeboard I/O firmware for the STM32F401: the Raspberry Pi style header
 // as standard Linux devices through the kernel's dln2 drivers (GPIO, I2C,
 // SPI, ADC), the header UART as a USB serial port, and a DFU runtime

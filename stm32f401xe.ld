@@ -1,3 +1,4 @@
+/* SPDX-License-Identifier: MIT */
 /* STM32F401xE: 512 KiB flash, 96 KiB RAM */
 ENTRY(Reset_Handler)
 

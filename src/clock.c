@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // System clock: 84 MHz core, 48 MHz USB, from the external crystal.
 //
 // The crystal's frequency is measured at boot instead of assumed: TIM11 can

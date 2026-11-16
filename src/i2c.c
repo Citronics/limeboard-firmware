@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DLN-2 I2C: two ports, as on a Raspberry Pi
 //   port 0: the STM32's I2C1, SDA GPIO2 = PB9, SCL GPIO3 = PB6 (Pi i2c1)
 //   port 1: the STM32's I2C3, SDA GPIO0 = PB4, SCL GPIO1 = PA8 (Pi i2c0)

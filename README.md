@@ -94,3 +94,10 @@ dfu-util -d 0483:df11 -a 0 -s 0x08000000:524288:leave -U backup.bin
   CDC serial, 3 DFU runtime. That uses every endpoint of the F401.
 - Every reply goes out as a transfer of its own, ended by a short or
   zero-length packet, and within the driver's 200 ms timeout.
+
+## License
+
+MIT (`LICENSE`), Copyright (c) 2026 Citronics. The libraries in `lib/` keep
+their own licenses: TinyUSB is MIT (`lib/tinyusb/LICENSE`), ST's CMSIS
+device and core headers are Apache-2.0 (`lib/cmsis-device-f4/LICENSE.md`,
+`lib/cmsis-core/LICENSE.md`).

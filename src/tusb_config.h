@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #pragma once
 
 #define CFG_TUSB_MCU OPT_MCU_STM32F4

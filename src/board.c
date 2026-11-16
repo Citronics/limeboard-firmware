@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Limeboard STM32F401: pin map and board setup.
 #include "board.h"
 

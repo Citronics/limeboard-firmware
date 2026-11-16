@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DLN-2 GPIO: the 32 lines of board.c (BCM numbering on the header).
 #include "board.h"
 #include "dln2.h"

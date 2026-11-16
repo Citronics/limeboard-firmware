@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DLN-2 request dispatch and the generic (module 0) commands.
 #include <string.h>
 

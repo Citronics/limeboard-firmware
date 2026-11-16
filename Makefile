@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 # Limeboard I/O firmware for the STM32F401: make, then flash build/limeboard-io.bin
 PROJECT = limeboard-io
 CROSS ?= arm-none-eabi-

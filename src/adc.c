@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DLN-2 ADC: 8 channels on header pins no Raspberry Pi bus uses, 10-bit
 // values (the Linux driver's fixed format: 3.3 V / 1024 per step). A pin
 // is analog only while its channel is enabled.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // Entering the STM32's ROM bootloader (USB DFU, 0483:df11) without a jumper:
 // on a DFU detach from the host, or when the user button is held at power-on.
 // It is entered straight after reset, before any peripheral is set up.

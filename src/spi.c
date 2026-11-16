@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // DLN-2 SPI: two ports, as on a Raspberry Pi
 //   port 0: the STM32's SPI1, MISO GPIO9, MOSI GPIO10, SCLK GPIO11,
 //           chip selects CE0 GPIO8, CE1 GPIO7 (Pi spi0)

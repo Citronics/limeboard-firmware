@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 // The header's UART (TXD GPIO14 = PA2, RXD GPIO15 = PA3, USART2) as a USB
 // serial port. The pins are UART while a program has the port open (DTR)
 // and plain GPIO otherwise.
