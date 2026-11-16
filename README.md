@@ -1,18 +1,18 @@
 # Limeboard I/O firmware
 
 Firmware for the Limeboard's STM32F401. It makes the board's Raspberry Pi
-style header appear in Linux as standard devices, through the kernel's
-mainline `dln2` drivers:
+style header appear in Linux as standard devices, through the
+`citronics-dln2` driver of the Citronics kernels:
 
 | Linux device | Header (BCM numbering, as on a Raspberry Pi) |
 |---|---|
-| GPIO chip "dln2", lines 0-27 | GPIO0 to GPIO27 |
+| GPIO chip "citronics-dln2", lines 0-27 | GPIO0 to GPIO27 |
 | GPIO lines 28-31 | board RGB LED (red, green, blue) and user button |
 | I2C port 0 (Pi i2c1) | SDA GPIO2, SCL GPIO3 (100 kHz), STM32 I2C1 |
 | I2C port 1 (Pi i2c0) | SDA GPIO0, SCL GPIO1 (100 kHz), STM32 I2C3 |
 | SPI port 0 (Pi spi0) | MOSI GPIO10, MISO GPIO9, SCLK GPIO11, CE0 GPIO8, CE1 GPIO7; STM32 SPI1, 328 kHz-42 MHz |
 | SPI port 1 (Pi spi1) | MOSI GPIO20, MISO GPIO19, SCLK GPIO21, CE0 GPIO18, CE1 GPIO17, CE2 GPIO16; STM32 SPI2, 164 kHz-21 MHz |
-| IIO ADC "dln2-adc", 8 channels, 10-bit, 3.3 V | GPIO5, 12, 16, 22, 17, 25, 20, 23 |
+| IIO ADC "citronics-dln2-adc", 8 channels, 10-bit, 3.3 V | GPIO5, 12, 16, 22, 17, 25, 20, 23 |
 | USB serial port (`ttyACM`) | UART TXD GPIO14, RXD GPIO15 |
 
 A pin is a plain GPIO until a function uses it: I2C, SPI and the ADC take
@@ -29,20 +29,14 @@ undriven.
 
 ## Linux side
 
-Kernel: `CONFIG_MFD_DLN2`, `CONFIG_GPIO_DLN2`, `CONFIG_I2C_DLN2`,
-`CONFIG_SPI_DLN2`, `CONFIG_DLN2_ADC`. The firmware uses USB ID 1209:0001
-(a pid.codes test ID until the product has its own), which the driver does
-not know yet:
-
-```sh
-echo "1209 0001" > /sys/bus/usb/drivers/dln2/new_id
-```
-
-A udev rule does this at boot in the Citronics images.
-
-The second I2C and SPI ports need a kernel whose `dln2` driver asks the
-adapter for its port counts and adds a bus for each ("mfd: dln2: add a cell
-for each I2C and SPI port"); others use port 0 only.
+Kernel: `CONFIG_CITRONICS_DLN2`, the Limeboard I/O driver of the Citronics
+kernels (`drivers/misc/citronics-dln2` in
+[linux-msm8x74](https://github.com/mlainez/linux-msm8x74), 6.12 and later).
+It binds to the firmware's USB ID, 1209:0001 (a pid.codes test ID until the
+product has its own), and adds a bus for each I2C and SPI port the firmware
+reports. The firmware speaks the Diolan DLN-2 protocol, so the kernel's own
+`dln2` drivers work too, for GPIO, the first I2C and SPI ports and the ADC,
+once told the ID (`echo "1209 0001" > /sys/bus/usb/drivers/dln2/new_id`).
 
 ## Versions
 
